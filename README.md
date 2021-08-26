@@ -32,7 +32,7 @@ VOC拓展数据集的百度网盘如下：
 
 ### 预测步骤
 #### 1、使用预训练权重
-a、下载完库后解压，如果想用backbone为mobilenet的进行预测，直接运行predict.py就可以了；如果想要利用backbone为resnet50的进行预测，在百度网盘下载pspnet_resnet50.pth，放入model_data，修改deeplab.py的backbone和model_path之后再运行predict.py，输入。  
+a、下载完库后解压，如果想用backbone为mobilenet的进行预测，直接运行predict.py就可以了；如果想要利用backbone为xception的进行预测，在百度网盘下载deeplab_xception.pth，放入model_data，修改deeplab.py的backbone和model_path之后再运行predict.py，输入。  
 ```python
 img/street.jpg
 ```

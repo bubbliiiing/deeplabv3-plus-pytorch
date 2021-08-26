@@ -29,7 +29,7 @@ name_classes    = ["background","aeroplane", "bicycle", "bird", "boat", "bottle"
 #   指向VOC数据集所在的文件夹
 #   默认指向根目录下的VOC数据集
 #-------------------------------------------------------#
-VOCdevkit_path  = 'D:\Study\Collection\Segmentation\Deeplabv3\deeplabv3-keras-master\VOCdevkit'
+VOCdevkit_path  = 'VOCdevkit'
 
 class miou_DeeplabV3(DeeplabV3):
     def detect_image(self, image):

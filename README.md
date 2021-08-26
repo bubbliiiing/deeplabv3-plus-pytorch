@@ -85,12 +85,12 @@ img/street.jpg
 d、在predict.py里面进行设置可以进行fps测试、整个文件夹的测试和video视频检测。   
 
 ### 训练步骤
-#### 1、训练voc数据集
+#### 训练voc数据集
 1、将我提供的voc数据集放入VOCdevkit中（无需运行voc_annotation.py）。  
 2、在train.py中设置对应参数，默认参数已经对应voc数据集所需要的参数了，所以只要修改backbone和model_path即可。  
 3、运行train.py进行训练。  
 
-#### 2、训练自己的数据集
+#### 训练自己的数据集
 1、本文使用VOC格式进行训练。  
 2、训练前将标签文件放在VOCdevkit文件夹下的VOC2007文件夹下的SegmentationClass中。    
 3、训练前将图片文件放在VOCdevkit文件夹下的VOC2007文件夹下的JPEGImages中。    

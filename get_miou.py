@@ -11,12 +11,12 @@ from utils.utils import cvtColor, resize_image
 from utils.utils_metrics import compute_mIoU
 
 #---------------------------------------------------------------------------#
-#   map_mode用于指定该文件运行时计算的内容
-#   map_mode为0代表整个miou计算流程，包括获得预测结果、计算miou。
-#   map_mode为1代表仅仅获得预测结果。
-#   map_mode为2代表仅仅计算miou。
+#   miou_mode用于指定该文件运行时计算的内容
+#   miou_mode为0代表整个miou计算流程，包括获得预测结果、计算miou。
+#   miou_mode为1代表仅仅获得预测结果。
+#   miou_mode为2代表仅仅计算miou。
 #---------------------------------------------------------------------------#
-map_mode        = 1
+miou_mode       = 0
 #------------------------------#
 #   分类个数+1、如2+1
 #------------------------------#
@@ -29,7 +29,7 @@ name_classes    = ["background","aeroplane", "bicycle", "bird", "boat", "bottle"
 #   指向VOC数据集所在的文件夹
 #   默认指向根目录下的VOC数据集
 #-------------------------------------------------------#
-VOCdevkit_path  = 'VOCdevkit'
+VOCdevkit_path  = 'D:\Study\Collection\Segmentation\Deeplabv3\deeplabv3-keras-master\VOCdevkit'
 
 class miou_DeeplabV3(DeeplabV3):
     def detect_image(self, image):
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     pred_dir    = "miou_pr_dir"
     gt_dir      = os.path.join(VOCdevkit_path, "VOC2007/SegmentationClass/")
 
-    if map_mode == 0 or map_mode == 1:
+    if miou_mode == 0 or miou_mode == 1:
         if not os.path.exists(pred_dir):
             os.makedirs(pred_dir)
             
@@ -97,7 +97,7 @@ if __name__ == "__main__":
             image.save(os.path.join(pred_dir, image_id + ".png"))
         print("Get predict result done.")
 
-    if map_mode == 0 or map_mode == 2:
+    if miou_mode == 0 or miou_mode == 2:
         print("Get miou.")
         compute_mIoU(gt_dir, pred_dir, image_ids, num_classes, name_classes)  # 执行计算mIoU的函数
         print("Get miou done.")

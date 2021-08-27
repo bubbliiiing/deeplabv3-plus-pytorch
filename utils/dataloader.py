@@ -27,7 +27,7 @@ class DeeplabDataset(Dataset):
         label = Image.fromarray(np.array(label))
         h, w = input_shape
 
-        if random:
+        if not random:
             iw, ih  = image.size
             scale   = min(w/iw, h/ih)
             nw      = int(iw*scale)

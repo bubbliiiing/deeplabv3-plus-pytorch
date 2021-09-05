@@ -99,7 +99,7 @@ img/street.jpg
 可完成预测。    
 4、在predict.py里面进行设置可以进行fps测试、整个文件夹的测试和video视频检测。   
 
-### c、评估步骤
+### 评估步骤
 1、设置get_miou.py里面的num_classes为预测的类的数量加1。  
 2、设置get_miou.py里面的name_classes为需要去区分的类别。  
 3、运行get_miou.py即可获得miou大小。  

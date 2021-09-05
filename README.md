@@ -24,8 +24,8 @@ torch==1.2.0
 代码中的deeplab_mobilenetv2.pth和deeplab_xception.pth是基于VOC拓展数据集训练的。训练和预测时注意修改backbone。    
 
 ### 文件下载
-训练所需的deeplab_mobilenetv2.pth和deeplab_xception.pth可在百度网盘中下载。    
-还未上传……
+训练所需的deeplab_mobilenetv2.pth和deeplab_xception.pth可在百度网盘中下载。     
+链接: https://pan.baidu.com/s/1KgLMbprQshlcpKgug9ECFg 提取码: 4ir8   
 
 VOC拓展数据集的百度网盘如下：  
 链接: https://pan.baidu.com/s/1BrR7AUM1XJvPWjKMIy2uEw 提取码: vszf    

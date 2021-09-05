@@ -8,7 +8,7 @@ import torch.nn.functional as F
 from PIL import Image
 from torch import nn
 
-from utils.utils import resize_image, cvtColor
+from utils.utils import resize_image, cvtColor, preprocess_input
 from nets.deeplabv3_plus import DeepLab
 
 
@@ -30,7 +30,7 @@ class DeeplabV3(object):
         #----------------------------------------#
         "num_classes"       : 21,
         #----------------------------------------#
-        #   所使用的的主干网络
+        #   所使用的的主干网络：mobilenet、xception    
         #----------------------------------------#
         "backbone"          : "mobilenet",
         #----------------------------------------#
@@ -100,18 +100,17 @@ class DeeplabV3(object):
     #   检测图片
     #---------------------------------------------------#
     def detect_image(self, image):
+        #---------------------------------------------------------#
+        #   在这里将图像转换成RGB图像，防止灰度图在预测时报错。
+        #   代码仅仅支持RGB图像的预测，所有其它类型的图像都会转化成RGB
+        #---------------------------------------------------------#
+        image       = cvtColor(image)
         #---------------------------------------------------#
         #   对输入图像进行一个备份，后面用于绘图
         #---------------------------------------------------#
         old_img     = copy.deepcopy(image)
         orininal_h  = np.array(image).shape[0]
         orininal_w  = np.array(image).shape[1]
-
-        #---------------------------------------------------------#
-        #   在这里将图像转换成RGB图像，防止灰度图在预测时报错。
-        #   代码仅仅支持RGB图像的预测，所有其它类型的图像都会转化成RGB
-        #---------------------------------------------------------#
-        image       = cvtColor(image)
         #---------------------------------------------------------#
         #   给图像增加灰条，实现不失真的resize
         #   也可以直接resize进行识别
@@ -120,7 +119,7 @@ class DeeplabV3(object):
         #---------------------------------------------------------#
         #   添加上batch_size维度
         #---------------------------------------------------------#
-        image_data  = np.expand_dims(np.transpose(np.array(image_data, dtype='float32'), (2, 0, 1)), 0) / 255. 
+        image_data  = np.expand_dims(np.transpose(preprocess_input(np.array(image_data, np.float32)), (2, 0, 1)), 0)
 
         with torch.no_grad():
             images = torch.from_numpy(image_data)
@@ -177,7 +176,7 @@ class DeeplabV3(object):
         #---------------------------------------------------------#
         #   添加上batch_size维度
         #---------------------------------------------------------#
-        image_data  = np.expand_dims(np.transpose(np.array(image_data, dtype='float32'), (2, 0, 1)), 0) / 255. 
+        image_data  = np.expand_dims(np.transpose(preprocess_input(np.array(image_data, np.float32)), (2, 0, 1)), 0)
 
         with torch.no_grad():
             images = torch.from_numpy(image_data)
@@ -217,3 +216,43 @@ class DeeplabV3(object):
         t2 = time.time()
         tact_time = (t2 - t1) / test_interval
         return tact_time
+
+    def get_miou_png(self, image):
+        #---------------------------------------------------------#
+        #   在这里将图像转换成RGB图像，防止灰度图在预测时报错。
+        #   代码仅仅支持RGB图像的预测，所有其它类型的图像都会转化成RGB
+        #---------------------------------------------------------#
+        image       = cvtColor(image)
+        orininal_h  = np.array(image).shape[0]
+        orininal_w  = np.array(image).shape[1]
+        #---------------------------------------------------------#
+        #   给图像增加灰条，实现不失真的resize
+        #   也可以直接resize进行识别
+        #---------------------------------------------------------#
+        image_data, nw, nh  = resize_image(image, (self.input_shape[1],self.input_shape[0]))
+        #---------------------------------------------------------#
+        #   添加上batch_size维度
+        #---------------------------------------------------------#
+        image_data  = np.expand_dims(np.transpose(preprocess_input(np.array(image_data, np.float32)), (2, 0, 1)), 0)
+
+        with torch.no_grad():
+            images = torch.from_numpy(image_data)
+            if self.cuda:
+                images = images.cuda()
+                
+            #---------------------------------------------------#
+            #   图片传入网络进行预测
+            #---------------------------------------------------#
+            pr = self.net(images)[0]
+            #---------------------------------------------------#
+            #   取出每一个像素点的种类
+            #---------------------------------------------------#
+            pr = F.softmax(pr.permute(1,2,0),dim = -1).cpu().numpy().argmax(axis=-1)
+            #--------------------------------------#
+            #   将灰条部分截取掉
+            #--------------------------------------#
+            pr = pr[int((self.input_shape[0] - nh) // 2) : int((self.input_shape[0] - nh) // 2 + nh), \
+                    int((self.input_shape[1] - nw) // 2) : int((self.input_shape[1] - nw) // 2 + nw)]
+
+        image = Image.fromarray(np.uint8(pr)).resize((orininal_w, orininal_h), Image.NEAREST)
+        return image

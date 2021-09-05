@@ -35,3 +35,7 @@ def resize_image(image, size):
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
         return param_group['lr']
+
+def preprocess_input(image):
+    image /= 255.0
+    return image

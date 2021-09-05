@@ -23,7 +23,8 @@ if __name__ == "__main__":
     #-------------------------------#
     num_classes = 21
     #-------------------------------#
-    #   mobilenet、xception    
+    #   所使用的的主干网络：
+    #   mobilenet、xception 
     #-------------------------------#
     backbone    = "mobilenet"
     #-------------------------------------------------------------------------------------#
@@ -57,7 +58,7 @@ if __name__ == "__main__":
     #----------------------------------------------------#
     UnFreeze_Epoch      = 100
     Unfreeze_batch_size = 4
-    Unfreeze_lr         = 1e-4
+    Unfreeze_lr         = 5e-5
     #------------------------------#
     #   数据集路径
     #------------------------------#
@@ -126,18 +127,23 @@ if __name__ == "__main__":
     #   提示OOM或者显存不足请调小Batch_size
     #------------------------------------------------------#
     if True:
-        optimizer       = optim.Adam(model_train.parameters(), Freeze_lr)
+        batch_size  = Freeze_batch_size
+        lr          = Freeze_lr
+        start_epoch = Init_Epoch
+        end_epoch   = Freeze_Epoch
+
+        optimizer       = optim.Adam(model_train.parameters(), lr)
         lr_scheduler    = optim.lr_scheduler.StepLR(optimizer, step_size = 1, gamma = 0.92)
 
         train_dataset   = DeeplabDataset(train_lines, input_shape, num_classes, True, VOCdevkit_path)
         val_dataset     = DeeplabDataset(val_lines, input_shape, num_classes, False, VOCdevkit_path)
-        gen             = DataLoader(train_dataset, shuffle = True, batch_size = Freeze_batch_size, num_workers = num_workers, pin_memory=True,
+        gen             = DataLoader(train_dataset, shuffle = True, batch_size = batch_size, num_workers = num_workers, pin_memory=True,
                                     drop_last = True, collate_fn = deeplab_dataset_collate)
-        gen_val         = DataLoader(val_dataset  , shuffle = True, batch_size = Freeze_batch_size, num_workers = num_workers, pin_memory=True, 
+        gen_val         = DataLoader(val_dataset  , shuffle = True, batch_size = batch_size, num_workers = num_workers, pin_memory=True, 
                                     drop_last = True, collate_fn = deeplab_dataset_collate)
 
-        epoch_step      = len(train_lines) // Freeze_batch_size
-        epoch_step_val  = len(val_lines) // Freeze_batch_size
+        epoch_step      = len(train_lines) // batch_size
+        epoch_step_val  = len(val_lines) // batch_size
         
         if epoch_step == 0 or epoch_step_val == 0:
             raise ValueError("数据集过小，无法进行训练，请扩充数据集。")
@@ -149,24 +155,29 @@ if __name__ == "__main__":
             for param in model.backbone.parameters():
                 param.requires_grad = False
 
-        for epoch in range(Init_Epoch, Freeze_Epoch):
+        for epoch in range(start_epoch, end_epoch):
             fit_one_epoch(model_train, model, loss_history, optimizer, epoch, 
-                    epoch_step, epoch_step_val, gen, gen_val, Freeze_Epoch, Cuda, dice_loss, num_classes)
+                    epoch_step, epoch_step_val, gen, gen_val, end_epoch, Cuda, dice_loss, num_classes)
             lr_scheduler.step()
     
     if True:
-        optimizer       = optim.Adam(model_train.parameters(), Unfreeze_lr)
+        batch_size  = Unfreeze_batch_size
+        lr          = Unfreeze_lr
+        start_epoch = Freeze_Epoch
+        end_epoch   = UnFreeze_Epoch
+
+        optimizer       = optim.Adam(model_train.parameters(), lr)
         lr_scheduler    = optim.lr_scheduler.StepLR(optimizer, step_size = 1, gamma = 0.92)
 
         train_dataset   = DeeplabDataset(train_lines, input_shape, num_classes, True, VOCdevkit_path)
         val_dataset     = DeeplabDataset(val_lines, input_shape, num_classes, False, VOCdevkit_path)
-        gen             = DataLoader(train_dataset, shuffle = True, batch_size = Unfreeze_batch_size, num_workers = num_workers, pin_memory=True,
+        gen             = DataLoader(train_dataset, shuffle = True, batch_size = batch_size, num_workers = num_workers, pin_memory=True,
                                     drop_last = True, collate_fn = deeplab_dataset_collate)
-        gen_val         = DataLoader(val_dataset  , shuffle = True, batch_size = Unfreeze_batch_size, num_workers = num_workers, pin_memory=True, 
+        gen_val         = DataLoader(val_dataset  , shuffle = True, batch_size = batch_size, num_workers = num_workers, pin_memory=True, 
                                     drop_last = True, collate_fn = deeplab_dataset_collate)
 
-        epoch_step      = len(train_lines) // Unfreeze_batch_size
-        epoch_step_val  = len(val_lines) // Unfreeze_batch_size
+        epoch_step      = len(train_lines) // batch_size
+        epoch_step_val  = len(val_lines) // batch_size
 
         if epoch_step == 0 or epoch_step_val == 0:
             raise ValueError("数据集过小，无法进行训练，请扩充数据集。")
@@ -175,8 +186,8 @@ if __name__ == "__main__":
             for param in model.backbone.parameters():
                 param.requires_grad = True
 
-        for epoch in range(Freeze_Epoch,UnFreeze_Epoch):
+        for epoch in range(start_epoch,end_epoch):
             fit_one_epoch(model_train, model, loss_history, optimizer, epoch, 
-                    epoch_step, epoch_step_val, gen, gen_val, UnFreeze_Epoch, Cuda, dice_loss, num_classes)
+                    epoch_step, epoch_step_val, gen, gen_val, end_epoch, Cuda, dice_loss, num_classes)
             lr_scheduler.step()
 

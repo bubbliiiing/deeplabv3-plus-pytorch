@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 from PIL import Image
 from torch.utils.data.dataset import Dataset
+from utils.utils import preprocess_input
 
 
 class DeeplabDataset(Dataset):
@@ -104,7 +105,7 @@ class DeeplabDataset(Dataset):
         #-------------------------------#
         jpg, png    = self.get_random_data(jpg, png, self.input_shape, random = self.random_data)
 
-        jpg         = np.transpose(np.array(jpg), [2,0,1])/255
+        jpg         = np.transpose(preprocess_input(np.array(jpg, np.float64)), [2,0,1])
         png         = np.array(png)
         png[png >= self.num_classes] = self.num_classes
         #-------------------------------------------------------#

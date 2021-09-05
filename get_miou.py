@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     image_ids   = open(os.path.join(VOCdevkit_path, "VOC2007/ImageSets/Segmentation/val.txt"),'r').read().splitlines() 
     gt_dir      = os.path.join(VOCdevkit_path, "VOC2007/SegmentationClass/")
-    pred_dir    = "map_out"
+    pred_dir    = "miou_out"
 
     if miou_mode == 0 or miou_mode == 1:
         if not os.path.exists(pred_dir):

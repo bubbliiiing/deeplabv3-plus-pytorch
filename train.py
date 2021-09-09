@@ -134,7 +134,7 @@ if __name__ == "__main__":
         start_epoch = Init_Epoch
         end_epoch   = Freeze_Epoch
 
-        optimizer       = optim.Adam(model_train.parameters(), lr)
+        optimizer       = optim.Adam(model_train.parameters(), lr, weight_decay=5e-4)
         lr_scheduler    = optim.lr_scheduler.StepLR(optimizer, step_size = 1, gamma = 0.92)
 
         train_dataset   = DeeplabDataset(train_lines, input_shape, num_classes, True, VOCdevkit_path)
@@ -168,7 +168,7 @@ if __name__ == "__main__":
         start_epoch = Freeze_Epoch
         end_epoch   = UnFreeze_Epoch
 
-        optimizer       = optim.Adam(model_train.parameters(), lr)
+        optimizer       = optim.Adam(model_train.parameters(), lr, weight_decay=5e-4)
         lr_scheduler    = optim.lr_scheduler.StepLR(optimizer, step_size = 1, gamma = 0.92)
 
         train_dataset   = DeeplabDataset(train_lines, input_shape, num_classes, True, VOCdevkit_path)

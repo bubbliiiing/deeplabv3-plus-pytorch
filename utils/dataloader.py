@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 from PIL import Image
 from torch.utils.data.dataset import Dataset
-from utils.utils import preprocess_input
+from utils.utils import preprocess_input, cvtColor
 
 
 class DeeplabDataset(Dataset):
@@ -29,6 +29,7 @@ class DeeplabDataset(Dataset):
         #   从文件中读取图像
         #-------------------------------#
         jpg         = Image.open(os.path.join(os.path.join(self.dataset_path, "VOC2007/JPEGImages"), name + ".jpg"))
+        jpg         = cvtColor(jpg)
         png         = Image.open(os.path.join(os.path.join(self.dataset_path, "VOC2007/SegmentationClass"), name + ".png"))
         #-------------------------------#
         #   数据增强

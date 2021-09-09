@@ -8,21 +8,20 @@ from utils.utils import preprocess_input, cvtColor
 
 
 class DeeplabDataset(Dataset):
-    def __init__(self, train_lines, input_shape, num_classes, random_data, dataset_path):
+    def __init__(self, annotation_lines, input_shape, num_classes, train, dataset_path):
         super(DeeplabDataset, self).__init__()
-        self.train_lines    = train_lines
-        self.input_shape    = input_shape
-        self.num_classes    = num_classes
-        self.random_data    = random_data
-        self.dataset_path   = dataset_path
-
-        self.train_batches  = len(train_lines)
+        self.annotation_lines   = annotation_lines
+        self.length             = len(annotation_lines)
+        self.input_shape        = input_shape
+        self.num_classes        = num_classes
+        self.train              = train
+        self.dataset_path       = dataset_path
 
     def __len__(self):
-        return self.train_batches
+        return self.length
 
     def __getitem__(self, index):
-        annotation_line = self.train_lines[index]
+        annotation_line = self.annotation_lines[index]
         name            = annotation_line.split()[0]
 
         #-------------------------------#
@@ -33,7 +32,7 @@ class DeeplabDataset(Dataset):
         #-------------------------------#
         #   数据增强
         #-------------------------------#
-        jpg, png    = self.get_random_data(jpg, png, self.input_shape, random = self.random_data)
+        jpg, png    = self.get_train(jpg, png, self.input_shape, random = self.train)
 
         jpg         = np.transpose(preprocess_input(np.array(jpg, np.float64)), [2,0,1])
         png         = np.array(png)
@@ -51,7 +50,7 @@ class DeeplabDataset(Dataset):
     def rand(self, a=0, b=1):
         return np.random.rand() * (b - a) + a
 
-    def get_random_data(self, image, label, input_shape, jitter=.3, hue=.1, sat=1.5, val=1.5, random=True):
+    def get_train(self, image, label, input_shape, jitter=.3, hue=.1, sat=1.5, val=1.5, random=True):
         image = cvtColor(image)
         label = Image.fromarray(np.array(label))
         h, w = input_shape

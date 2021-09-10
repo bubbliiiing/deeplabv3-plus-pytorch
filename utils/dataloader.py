@@ -85,7 +85,6 @@ class DeeplabDataset(Dataset):
 
         image = image.resize((nw,nh), Image.BICUBIC)
         label = label.resize((nw,nh), Image.NEAREST)
-        label = label.convert("L")
         
         flip = self.rand()<.5
         if flip: 

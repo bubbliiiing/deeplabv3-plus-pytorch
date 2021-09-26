@@ -32,7 +32,7 @@ class DeeplabDataset(Dataset):
         #-------------------------------#
         #   数据增强
         #-------------------------------#
-        jpg, png    = self.get_train(jpg, png, self.input_shape, random = self.train)
+        jpg, png    = self.get_random_data(jpg, png, self.input_shape, random = self.train)
 
         jpg         = np.transpose(preprocess_input(np.array(jpg, np.float64)), [2,0,1])
         png         = np.array(png)
@@ -50,7 +50,7 @@ class DeeplabDataset(Dataset):
     def rand(self, a=0, b=1):
         return np.random.rand() * (b - a) + a
 
-    def get_train(self, image, label, input_shape, jitter=.3, hue=.1, sat=1.5, val=1.5, random=True):
+    def get_random_data(self, image, label, input_shape, jitter=.3, hue=.1, sat=1.5, val=1.5, random=True):
         image = cvtColor(image)
         label = Image.fromarray(np.array(label))
         h, w = input_shape

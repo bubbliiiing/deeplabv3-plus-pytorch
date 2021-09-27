@@ -1,15 +1,10 @@
 import math
 import os
-import torchvision
 import torch
 import torch.nn as nn
 import torch.utils.model_zoo as model_zoo
 
 bn_mom = 0.0003
-
-model_urls = {
-    'xception': 'https://github.com/bubbliiiing/deeplabv3-plus-pytorch/releases/download/v1.0/xception_pytorch_imagenet.pth'
-}
 
 class SeparableConv2d(nn.Module):
     def __init__(self,in_channels,out_channels,kernel_size=1,stride=1,padding=0,dilation=1,bias=False,activate_first=True,inplace=True):
@@ -199,9 +194,5 @@ def load_url(url, model_dir='./model_data', map_location=None):
 def xception(pretrained=True, downsample_factor=16):
     model = Xception(downsample_factor=downsample_factor)
     if pretrained:
-        old_dict = model_zoo.load_url(model_urls['xception'],model_dir='./model_data')
-        model_dict = model.state_dict()
-        old_dict = {k: v for k,v in old_dict.items() if ('itr' not in k and 'tmp' not in k and 'track' not in k)}
-        model_dict.update(old_dict)
-        model.load_state_dict(model_dict) 
+        model.load_state_dict(load_url('https://github.com/bubbliiiing/deeplabv3-plus-pytorch/releases/download/v1.0/xception_pytorch_imagenet.pth'), strict=False)
     return model

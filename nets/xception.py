@@ -1,6 +1,6 @@
 import math
 import os
-
+import torchvision
 import torch
 import torch.nn as nn
 import torch.utils.model_zoo as model_zoo
@@ -8,7 +8,7 @@ import torch.utils.model_zoo as model_zoo
 bn_mom = 0.0003
 
 model_urls = {
-    'xception': '/home/wangyude/.torch/models/xception_pytorch_imagenet.pth'#'http://data.lip6.fr/cadene/pretrainedmodels/xception-b5690688.pth'
+    'xception': 'https://github.com/bubbliiiing/deeplabv3-plus-pytorch/releases/download/v1.0/xception_pytorch_imagenet.pth'
 }
 
 class SeparableConv2d(nn.Module):
@@ -34,7 +34,6 @@ class SeparableConv2d(nn.Module):
         if not self.activate_first:
             x = self.relu2(x)
         return x
-
 
 class Block(nn.Module):
     def __init__(self,in_filters,out_filters,strides=1,atrous=None,grow_first=True,activate_first=True,inplace=True):

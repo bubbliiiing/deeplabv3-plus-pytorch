@@ -9,11 +9,11 @@ class MobileNetV2(nn.Module):
         super(MobileNetV2, self).__init__()
         from functools import partial
         
-        model = mobilenetv2(pretrained)
-        self.features = model.features[:-1]
+        model           = mobilenetv2(pretrained)
+        self.features   = model.features[:-1]
 
-        self.total_idx = len(self.features)
-        self.down_idx = [2, 4, 7, 14]
+        self.total_idx  = len(self.features)
+        self.down_idx   = [2, 4, 7, 14]
 
         if downsample_factor == 8:
             for i in range(self.down_idx[-2], self.down_idx[-1]):
@@ -170,8 +170,8 @@ class DeepLab(nn.Module):
         H, W = x.size(2), x.size(3)
         #-----------------------------------------#
         #   获得两个特征层
-        #   浅层特征-进行卷积处理
-        #   主干部分-利用ASPP结构进行加强特征提取
+        #   low_level_features: 浅层特征-进行卷积处理
+        #   x : 主干部分-利用ASPP结构进行加强特征提取
         #-----------------------------------------#
         low_level_features, x = self.backbone(x)
         x = self.aspp(x)

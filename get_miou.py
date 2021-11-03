@@ -6,6 +6,11 @@ from tqdm import tqdm
 from deeplab import DeeplabV3
 from utils.utils_metrics import compute_mIoU
 
+'''
+进行指标评估需要注意以下几点：
+1、该文件生成的图为灰度图，因为值比较小，按照PNG形式的图看是没有显示效果的，所以看到近似全黑的图是正常的。
+2、该文件计算的是验证集的miou，当前该库将测试集当作验证集使用，不单独划分测试集
+'''
 if __name__ == "__main__":
     #---------------------------------------------------------------------------#
     #   miou_mode用于指定该文件运行时计算的内容
@@ -22,6 +27,7 @@ if __name__ == "__main__":
     #   区分的种类，和json_to_dataset里面的一样
     #--------------------------------------------#
     name_classes    = ["background","aeroplane", "bicycle", "bird", "boat", "bottle", "bus", "car", "cat", "chair", "cow", "diningtable", "dog", "horse", "motorbike", "person", "pottedplant", "sheep", "sofa", "train", "tvmonitor"]
+    # name_classes    = ["_background_","cat","dog"]
     #-------------------------------------------------------#
     #   指向VOC数据集所在的文件夹
     #   默认指向根目录下的VOC数据集

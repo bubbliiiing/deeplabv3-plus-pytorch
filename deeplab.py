@@ -2,28 +2,29 @@ import colorsys
 import copy
 import time
 
+import cv2
 import numpy as np
 import torch
 import torch.nn.functional as F
 from PIL import Image
 from torch import nn
 
-from utils.utils import resize_image, cvtColor, preprocess_input
 from nets.deeplabv3_plus import DeepLab
+from utils.utils import cvtColor, preprocess_input, resize_image
 
 
-#--------------------------------------------#
+#-----------------------------------------------------------------------------------#
 #   使用自己训练好的模型预测需要修改3个参数
 #   model_path、backbone和num_classes都需要修改！
-#   如果出现shape不匹配
-#   一定要注意训练时的model_path、
-#   backbone和num_classes数的修改
-#--------------------------------------------#
+#   如果出现shape不匹配，一定要注意训练时的model_path、backbone和num_classes的修改
+#-----------------------------------------------------------------------------------#
 class DeeplabV3(object):
     _defaults = {
-        #----------------------------------------#
+        #-------------------------------------------------------------------#
         #   model_path指向logs文件夹下的权值文件
-        #----------------------------------------#
+        #   训练好后logs文件夹下存在多个权值文件，选择验证集损失较低的即可。
+        #   验证集损失较低不代表miou较高，仅代表该权值在验证集上泛化性能较好。
+        #-------------------------------------------------------------------#
         "model_path"        : 'model_data/deeplab_mobilenetv2.pth',
         #----------------------------------------#
         #   所需要区分的类的个数+1
@@ -133,12 +134,20 @@ class DeeplabV3(object):
             #---------------------------------------------------#
             #   取出每一个像素点的种类
             #---------------------------------------------------#
-            pr = F.softmax(pr.permute(1,2,0),dim = -1).cpu().numpy().argmax(axis=-1)
+            pr = F.softmax(pr.permute(1,2,0),dim = -1).cpu().numpy()
             #--------------------------------------#
             #   将灰条部分截取掉
             #--------------------------------------#
             pr = pr[int((self.input_shape[0] - nh) // 2) : int((self.input_shape[0] - nh) // 2 + nh), \
                     int((self.input_shape[1] - nw) // 2) : int((self.input_shape[1] - nw) // 2 + nw)]
+            #---------------------------------------------------#
+            #   进行图片的resize
+            #---------------------------------------------------#
+            pr = cv2.resize(pr, (orininal_w, orininal_h), interpolation = cv2.INTER_LINEAR)
+            #---------------------------------------------------#
+            #   取出每一个像素点的种类
+            #---------------------------------------------------#
+            pr = pr.argmax(axis=-1)
     
         #------------------------------------------------#
         #   创建一副新图，并根据每个像素点的种类赋予颜色
@@ -152,7 +161,7 @@ class DeeplabV3(object):
         #------------------------------------------------#
         #   将新图片转换成Image的形式
         #------------------------------------------------#
-        image = Image.fromarray(np.uint8(seg_img)).resize((orininal_w,orininal_h))
+        image = Image.fromarray(np.uint8(seg_img))
 
         #------------------------------------------------#
         #   将新图片和原图片混合
@@ -247,12 +256,20 @@ class DeeplabV3(object):
             #---------------------------------------------------#
             #   取出每一个像素点的种类
             #---------------------------------------------------#
-            pr = F.softmax(pr.permute(1,2,0),dim = -1).cpu().numpy().argmax(axis=-1)
+            pr = F.softmax(pr.permute(1,2,0),dim = -1).cpu().numpy()
             #--------------------------------------#
             #   将灰条部分截取掉
             #--------------------------------------#
             pr = pr[int((self.input_shape[0] - nh) // 2) : int((self.input_shape[0] - nh) // 2 + nh), \
                     int((self.input_shape[1] - nw) // 2) : int((self.input_shape[1] - nw) // 2 + nw)]
-
-        image = Image.fromarray(np.uint8(pr)).resize((orininal_w, orininal_h), Image.NEAREST)
+            #---------------------------------------------------#
+            #   进行图片的resize
+            #---------------------------------------------------#
+            pr = cv2.resize(pr, (orininal_w, orininal_h), interpolation = cv2.INTER_LINEAR)
+            #---------------------------------------------------#
+            #   取出每一个像素点的种类
+            #---------------------------------------------------#
+            pr = pr.argmax(axis=-1)
+    
+        image = Image.fromarray(np.uint8(pr))
         return image

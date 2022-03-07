@@ -4,7 +4,6 @@ from functools import partial
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch import nn
 
 
 def CE_Loss(inputs, target, cls_weights, num_classes=21):

@@ -338,3 +338,5 @@ if __name__ == "__main__":
 
             fit_one_epoch(model_train, model, loss_history, optimizer, epoch, 
                     epoch_step, epoch_step_val, gen, gen_val, UnFreeze_Epoch, Cuda, dice_loss, focal_loss, cls_weights, num_classes, save_period)
+        
+        loss_history.writer.close()

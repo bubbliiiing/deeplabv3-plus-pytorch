@@ -50,7 +50,7 @@ class DeeplabDataset(Dataset):
     def rand(self, a=0, b=1):
         return np.random.rand() * (b - a) + a
 
-    def get_random_data(self, image, label, input_shape, jitter=.3, hue=.1, sat=1.5, val=1.5, random=True):
+    def get_random_data(self, image, label, input_shape, jitter=.3, hue=.1, sat=0.7, val=0.3, random=True):
         image   = cvtColor(image)
         label   = Image.fromarray(np.array(label))
         #------------------------------#

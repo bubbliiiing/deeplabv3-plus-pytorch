@@ -25,10 +25,10 @@ torch==1.2.0
 
 ### 文件下载
 训练所需的deeplab_mobilenetv2.pth和deeplab_xception.pth可在百度网盘中下载。     
-链接: https://pan.baidu.com/s/1nDzHR803q8SsGZfnOoOIsg 提取码: x9cb  
+链接: https://pan.baidu.com/s/1IQ3XYW-yRWQAy7jxCUHq8Q 提取码: qqq4   
 
 VOC拓展数据集的百度网盘如下：  
-链接: https://pan.baidu.com/s/1BrR7AUM1XJvPWjKMIy2uEw 提取码: vszf    
+链接: https://pan.baidu.com/s/1vkk3lMheUm6IjTXznlg7Ng 提取码: 44mk   
 
 ### 训练步骤
 #### a、训练voc数据集

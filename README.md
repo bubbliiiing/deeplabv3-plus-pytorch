@@ -2,14 +2,28 @@
 ---
 
 ### 目录
-1. [性能情况 Performance](#性能情况)
-2. [所需环境 Environment](#所需环境)
-3. [注意事项 Attention](#注意事项)
-4. [文件下载 Download](#文件下载)
-5. [训练步骤 How2train](#训练步骤)
-6. [预测步骤 How2predict](#预测步骤)
-7. [评估步骤 miou](#评估步骤)
-8. [参考资料 Reference](#Reference)
+1. [仓库更新 Top News](#仓库更新)
+2. [相关仓库 Related code](#相关仓库)
+3. [性能情况 Performance](#性能情况)
+4. [所需环境 Environment](#所需环境)
+5. [文件下载 Download](#文件下载)
+6. [训练步骤 How2train](#训练步骤)
+7. [预测步骤 How2predict](#预测步骤)
+8. [评估步骤 miou](#评估步骤)
+9. [参考资料 Reference](#Reference)
+
+## Top News
+**`2022-03`**:**进行大幅度更新、支持step、cos学习率下降法、支持adam、sgd优化器选择、支持学习率根据batch_size自适应调整。**  
+BiliBili视频中的原仓库地址为：https://github.com/bubbliiiing/deeplabv3-plus-pytorch/tree/bilibili
+
+**`2020-08`**:**创建仓库、支持多backbone、支持数据miou评估、标注数据处理、大量注释等。**  
+
+## 相关仓库
+| 模型 | 路径 |
+| :----- | :----- |
+Unet | https://github.com/bubbliiiing/unet-pytorch  
+PSPnet | https://github.com/bubbliiiing/pspnet-pytorch
+deeplabv3+ | https://github.com/bubbliiiing/deeplabv3-plus-pytorch
 
 ### 性能情况
 | 训练数据集 | 权值文件名称 | 测试数据集 | 输入图片大小 | mIOU | 
@@ -25,10 +39,10 @@ torch==1.2.0
 
 ### 文件下载
 训练所需的deeplab_mobilenetv2.pth和deeplab_xception.pth可在百度网盘中下载。     
-链接: https://pan.baidu.com/s/1nDzHR803q8SsGZfnOoOIsg 提取码: x9cb  
+链接: https://pan.baidu.com/s/1IQ3XYW-yRWQAy7jxCUHq8Q 提取码: qqq4   
 
 VOC拓展数据集的百度网盘如下：  
-链接: https://pan.baidu.com/s/1BrR7AUM1XJvPWjKMIy2uEw 提取码: vszf    
+链接: https://pan.baidu.com/s/1vkk3lMheUm6IjTXznlg7Ng 提取码: 44mk   
 
 ### 训练步骤
 #### a、训练voc数据集

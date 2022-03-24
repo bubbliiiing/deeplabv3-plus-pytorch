@@ -1,10 +1,15 @@
+import os
+
 import torch
+from nets.deeplabv3_training import (CE_Loss, Dice_loss, Focal_Loss,
+                                     weights_init)
 from tqdm import tqdm
-from nets.deeplabv3_training import CE_Loss, Dice_loss, Focal_Loss, weights_init
+
 from utils.utils import get_lr
 from utils.utils_metrics import f_score
 
-def fit_one_epoch(model_train, model, loss_history, optimizer, epoch, epoch_step, epoch_step_val, gen, gen_val, Epoch, cuda, dice_loss, focal_loss, cls_weights, num_classes):
+
+def fit_one_epoch(model_train, model, loss_history, optimizer, epoch, epoch_step, epoch_step_val, gen, gen_val, Epoch, cuda, dice_loss, focal_loss, cls_weights, num_classes, save_period, save_dir):
     total_loss      = 0
     total_f_score   = 0
 
@@ -96,14 +101,14 @@ def fit_one_epoch(model_train, model, loss_history, optimizer, epoch, epoch_step
                 val_loss    += loss.item()
                 val_f_score += _f_score.item()
                 
-            
             pbar.set_postfix(**{'total_loss': val_loss / (iteration + 1),
                                 'f_score'   : val_f_score / (iteration + 1),
                                 'lr'        : get_lr(optimizer)})
             pbar.update(1)
             
-    loss_history.append_loss(total_loss/(epoch_step+1), val_loss/(epoch_step_val+1))
     print('Finish Validation')
-    print('Epoch:'+ str(epoch+1) + '/' + str(Epoch))
-    print('Total Loss: %.3f || Val Loss: %.3f ' % (total_loss / (epoch_step + 1), val_loss / (epoch_step_val + 1)))
-    torch.save(model.state_dict(), 'logs/ep%03d-loss%.3f-val_loss%.3f.pth'%((epoch + 1), total_loss / (epoch_step + 1), val_loss / (epoch_step_val + 1)))
+    loss_history.append_loss(epoch + 1, total_loss / epoch_step, val_loss / epoch_step_val)
+    print('Epoch:'+ str(epoch + 1) + '/' + str(Epoch))
+    print('Total Loss: %.3f || Val Loss: %.3f ' % (total_loss / epoch_step, val_loss / epoch_step_val))
+    if (epoch + 1) % save_period == 0 or epoch + 1 == Epoch:
+        torch.save(model.state_dict(), os.path.join(save_dir, 'ep%03d-loss%.3f-val_loss%.3f.pth' % (epoch + 1, total_loss / epoch_step, val_loss / epoch_step_val)))

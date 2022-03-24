@@ -52,7 +52,8 @@ if __name__ == "__main__":
     num_classes = 21
     #---------------------------------#
     #   所使用的的主干网络：
-    #   mobilenet、xception
+    #   mobilenet
+    #   xception
     #---------------------------------#
     backbone    = "mobilenet"
     #----------------------------------------------------------------------------------------------------------------------------#
@@ -76,10 +77,9 @@ if __name__ == "__main__":
     #   此处使用的是整个模型的权重，因此是在train.py进行加载的，pretrain不影响此处的权值加载。
     #   如果想要让模型从主干的预训练权值开始训练，则设置model_path = ''，pretrain = True，此时仅加载主干。
     #   如果想要让模型从0开始训练，则设置model_path = ''，pretrain = Fasle，Freeze_Train = Fasle，此时从0开始训练，且没有冻结主干的过程。
-    #   一般来讲，从0开始训练效果会很差，因为权值太过随机，特征提取效果不明显。
-    #
-    #   网络一般不从0开始训练，至少会使用主干部分的权值，有些论文提到可以不用预训练，主要原因是他们 数据集较大 且 调参能力优秀。
-    #   如果一定要训练网络的主干部分，可以了解imagenet数据集，首先训练分类模型，分类模型的 主干部分 和该模型通用，基于此进行训练。
+    #   
+    #   一般来讲，网络从0开始的训练效果会很差，因为权值太过随机，特征提取效果不明显，因此非常、非常、非常不建议大家从0开始训练！
+    #   如果一定要从0开始，可以了解imagenet数据集，首先训练分类模型，获得网络的主干部分权值，分类模型的 主干部分 和该模型通用，基于此进行训练。
     #----------------------------------------------------------------------------------------------------------------------------#
     model_path  = "model_data/deeplab_mobilenetv2.pth"
     #---------------------------------------------------------#
@@ -103,10 +103,10 @@ if __name__ == "__main__":
     #       Init_Epoch = 0，UnFreeze_Epoch = 100，Freeze_Train = False（不冻结训练）
     #       其中：UnFreeze_Epoch可以在100-300之间调整。optimizer_type = 'sgd'，Init_lr = 1e-2。
     #   （二）从主干网络的预训练权重开始训练：
-    #       Init_Epoch = 0，Freeze_Epoch = 50，UnFreeze_Epoch = 300，Freeze_Train = True（冻结训练）
-    #       Init_Epoch = 0，UnFreeze_Epoch = 300，Freeze_Train = False（不冻结训练）
-    #       其中：由于从主干网络的预训练权重开始训练，主干的权值不一定适合目标检测，需要更多的训练跳出局部最优解。
-    #             UnFreeze_Epoch可以在200-300之间调整，YOLOV5和YOLOX均推荐使用300。optimizer_type = 'sgd'，Init_lr = 1e-2。
+    #       Init_Epoch = 0，Freeze_Epoch = 50，UnFreeze_Epoch = 120，Freeze_Train = True（冻结训练）
+    #       Init_Epoch = 0，UnFreeze_Epoch = 120，Freeze_Train = False（不冻结训练）
+    #       其中：由于从主干网络的预训练权重开始训练，主干的权值不一定适合语义分割，需要更多的训练跳出局部最优解。
+    #             UnFreeze_Epoch可以在120-300之间调整。optimizer_type = 'sgd'，Init_lr = 1e-2。
     #   （三）batch_size的设置：
     #       在显卡能够接受的范围内，以大为好。显存不足与数据集大小无关，提示显存不足（OOM或者CUDA out of memory）请调小batch_size。
     #       受到BatchNorm层影响，batch_size最小为2，不能为1。
@@ -173,6 +173,10 @@ if __name__ == "__main__":
     #   save_period     多少个epoch保存一次权值，默认每个世代都保存
     #------------------------------------------------------------------#
     save_period         = 1
+    #------------------------------------------------------------------#
+    #   save_dir        权值与日志文件保存的文件夹
+    #------------------------------------------------------------------#
+    save_dir            = 'logs'
 
     #------------------------------------------------------------------#
     #   VOCdevkit_path  数据集路径
@@ -220,7 +224,7 @@ if __name__ == "__main__":
         model_dict.update(pretrained_dict)
         model.load_state_dict(model_dict)
 
-    loss_history    = LossHistory("logs/", model, input_shape=input_shape)
+    loss_history    = LossHistory(save_dir, model, input_shape=input_shape)
 
     model_train = model.train()
     if Cuda:
@@ -337,6 +341,6 @@ if __name__ == "__main__":
             set_optimizer_lr(optimizer, lr_scheduler_func, epoch)
 
             fit_one_epoch(model_train, model, loss_history, optimizer, epoch, 
-                    epoch_step, epoch_step_val, gen, gen_val, UnFreeze_Epoch, Cuda, dice_loss, focal_loss, cls_weights, num_classes, save_period)
+                    epoch_step, epoch_step_val, gen, gen_val, UnFreeze_Epoch, Cuda, dice_loss, focal_loss, cls_weights, num_classes, save_period, save_dir)
         
         loss_history.writer.close()

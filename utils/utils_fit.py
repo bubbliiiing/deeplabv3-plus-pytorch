@@ -101,7 +101,7 @@ def fit_one_epoch(model_train, model, loss_history, optimizer, epoch, epoch_step
                 val_loss    += loss.item()
                 val_f_score += _f_score.item()
                 
-            pbar.set_postfix(**{'total_loss': val_loss / (iteration + 1),
+            pbar.set_postfix(**{'val_loss'  : val_loss / (iteration + 1),
                                 'f_score'   : val_f_score / (iteration + 1),
                                 'lr'        : get_lr(optimizer)})
             pbar.update(1)

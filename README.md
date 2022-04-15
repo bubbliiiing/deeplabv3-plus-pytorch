@@ -13,6 +13,8 @@
 9. [参考资料 Reference](#Reference)
 
 ## Top News
+**`2022-04`**:**支持多GPU训练。**  
+
 **`2022-03`**:**进行大幅度更新、支持step、cos学习率下降法、支持adam、sgd优化器选择、支持学习率根据batch_size自适应调整。**  
 BiliBili视频中的原仓库地址为：https://github.com/bubbliiiing/deeplabv3-plus-pytorch/tree/bilibili
 

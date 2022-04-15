@@ -115,14 +115,14 @@ class DeeplabDataset(Dataset):
         #------------------------------------------#
         #   高斯模糊
         #------------------------------------------#
-        blur = self.rand() < 0.5
+        blur = self.rand() < 0.25
         if blur: 
             image_data = cv2.GaussianBlur(image_data, (5, 5), 0)
 
         #------------------------------------------#
         #   旋转
         #------------------------------------------#
-        rotate = self.rand() < 0.5
+        rotate = self.rand() < 0.25
         if rotate: 
             center      = (w // 2, h // 2)
             rotation    = np.random.randint(-10, 11)

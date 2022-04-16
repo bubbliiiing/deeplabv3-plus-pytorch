@@ -12,6 +12,7 @@ from nets.deeplabv3_training import (get_lr_scheduler, set_optimizer_lr,
                                      weights_init)
 from utils.callbacks import LossHistory
 from utils.dataloader import DeeplabDataset, deeplab_dataset_collate
+from utils.utils import download_weights
 from utils.utils_fit import fit_one_epoch
 
 '''
@@ -253,6 +254,14 @@ if __name__ == "__main__":
     else:
         device          = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         local_rank      = 0
+
+    if pretrained:
+        if distributed:
+            if local_rank == 0:
+                download_weights(backbone)  
+            dist.barrier()
+        else:
+            download_weights(backbone)
 
     model   = DeepLab(num_classes=num_classes, backbone=backbone, downsample_factor=downsample_factor, pretrained=pretrained)
     if not pretrained:

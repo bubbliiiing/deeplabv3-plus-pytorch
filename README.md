@@ -26,6 +26,7 @@ BiliBili视频中的原仓库地址为：https://github.com/bubbliiiing/deeplabv
 Unet | https://github.com/bubbliiiing/unet-pytorch  
 PSPnet | https://github.com/bubbliiiing/pspnet-pytorch
 deeplabv3+ | https://github.com/bubbliiiing/deeplabv3-plus-pytorch
+hrnet | https://github.com/bubbliiiing/hrnet-pytorch
 
 ### 性能情况
 | 训练数据集 | 权值文件名称 | 测试数据集 | 输入图片大小 | mIOU | 
